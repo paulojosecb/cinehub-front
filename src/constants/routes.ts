@@ -1,0 +1,8 @@
+export const ADMIN = '/admin'
+export const DETAIL = '/detail'
+export const HOME = '/home'
+export const INPUT = '/input'
+export const LOGIN = '/login'
+export const SIGNUP = '/signup'
+export const USER_DETAILS = '/user-details'
+export const USERS = '/users'
