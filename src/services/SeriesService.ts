@@ -6,53 +6,53 @@ class SerieService {
   public fetchSeries = async (): Promise<[Serie]> => {
     const response = await fetch(this.url)
 
-    const movies = this.jsonTo(await response.json())
+    const series = this.jsonTo(await response.json())
 
-    return movies
+    return series
   }
 
-  public createSerie = async (movie: Serie): Promise<Serie> => {
+  public createSerie = async (serie: Serie): Promise<Serie> => {
     const response = await fetch(this.url, {
       method: 'POST',
-      body: JSON.stringify(movie),
+      body: JSON.stringify(serie),
       headers: {
         'Content-Type': 'application/json'
       }
     })
 
-    const movies = this.jsonTo(await response.json())
-    return movies[0]
+    const series = this.jsonTo(await response.json())
+    return series[0]
   }
 
-  public updateSerie = async (movie: Serie): Promise<Serie> => {
-    const response = await fetch(`${this.url}/${movie.id}`, {
+  public updateSerie = async (serie: Serie): Promise<Serie> => {
+    const response = await fetch(`${this.url}/${serie.id}`, {
       method: 'PUT',
-      body: JSON.stringify(movie),
+      body: JSON.stringify(serie),
       headers: {
         'Content-Type': 'application/json'
       }
     })
 
-    const movies = this.jsonTo(await response.json())
-    return movies[0]
+    const series = this.jsonTo(await response.json())
+    return series[0]
   }
 
-  public deleteSerie = async (movie: Serie): Promise<Serie> => {
-    const response = await fetch(`${this.url}/${movie.id}`, {
+  public deleteSerie = async (serie: Serie): Promise<Serie> => {
+    const response = await fetch(`${this.url}/${serie.id}`, {
       method: 'DELETE',
-      body: JSON.stringify(movie),
+      body: JSON.stringify(serie),
       headers: {
         'Content-Type': 'application/json'
       }
     })
 
-    const movies = this.jsonTo(await response.json())
-    return movies[0]
+    const series = this.jsonTo(await response.json())
+    return series[0]
   }
 
   private jsonTo = (json: any): [Serie] => {
-    const movies = json.map((u: any) => {
-      const movie: Serie = {
+    const series = json.map((u: any) => {
+      const serie: Serie = {
         id: u.id,
         title: u.title,
         photo: u.photo,
@@ -60,10 +60,10 @@ class SerieService {
         format: u.format,
         category: u.category
       }
-      return movie
+      return serie
     })
 
-    return movies
+    return series
   }
 }
 
