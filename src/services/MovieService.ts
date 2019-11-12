@@ -3,11 +3,10 @@ import Movie from '../models/Movie'
 class MovieService {
   public url = `http://localhost:3000/movies`
 
-  public fetchMovies = async (): Promise<[Movie]> => {
-    const response = await fetch(this.url)
+  public fetchMovies = async (user: number): Promise<[Movie]> => {
+    const response = await fetch(`http://localhost:3000/users/1/movies`)
 
     const movies = this.jsonTo(await response.json())
-
     return movies
   }
 
@@ -58,9 +57,9 @@ class MovieService {
         duration: u.duration,
         photo: u.photo,
         year: u.year,
-        owner: u.owner,
-        format: u.format,
-        category: u.category
+        owner: u.user_id,
+        format: u.format_id,
+        category: u.category_id
       }
       return movie
     })
