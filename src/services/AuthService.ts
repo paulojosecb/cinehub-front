@@ -84,6 +84,10 @@ class AuthService {
 
     return null
   }
+
+  public updatedLogged = (user: User): void => {
+    localStorage.setItem('authUser', JSON.stringify(user))
+  }
 }
 
 export default new AuthService()

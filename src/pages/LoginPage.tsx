@@ -32,17 +32,29 @@ class LoginPage extends React.Component<RouteComponentProps, LoginPageState> {
     }
   }
 
+  handleSignUp = () => {
+    const { history } = this.props
+    history.push(ROUTES.SIGNUP)
+  }
+
   handleSubmitButton = () => {
     const { email, password } = this.state
     const { history } = this.props
     AuthService.signIn(email, password)
-      .then(user => history.push(ROUTES.HOME))
+      .then(user => history.push(`${ROUTES.HOME}/${user.id}`))
       .catch(error => {
         notify.show('Ocorreu um erro ao fazer o login', 'warning')
       })
   }
 
-  // componentDidMount() {}
+  componentDidMount() {
+    const { history } = this.props
+
+    const user = AuthService.getLoggedUser()
+    if (user) {
+      history.push(`${ROUTES.HOME}/${user.id}`)
+    }
+  }
 
   render() {
     const { email, password } = this.state
@@ -64,6 +76,7 @@ class LoginPage extends React.Component<RouteComponentProps, LoginPageState> {
           value={password}
           onChange={this.handleInputChange}
         />
+        <button onClick={this.handleSignUp}>Cadastrar</button>
         <button onClick={this.handleSubmitButton}>Entrar</button>
       </div>
     )

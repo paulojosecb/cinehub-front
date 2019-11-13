@@ -1,4 +1,5 @@
 import React, { ChangeEvent } from 'react'
+import { withRouter, RouteComponentProps } from 'react-router-dom'
 import SectionTitle from '../components/SectionTitle'
 
 import Format from '../models/Format'
@@ -8,6 +9,11 @@ import Serie from '../models/Serie'
 
 import FormatService from '../services/FormatService'
 import CategoryService from '../services/CategoryService'
+import MovieService from '../services/MovieService'
+import AuthService from '../services/AuthService'
+
+import * as ROUTES from '../constants/routes'
+import SeriesService from '../services/SeriesService'
 
 interface InputPageState {
   formats: Format[]
@@ -20,8 +26,8 @@ interface InputPageState {
   category: number
 }
 
-class InputPage extends React.Component<{}, InputPageState> {
-  constructor(props: {}) {
+class InputPage extends React.Component<RouteComponentProps, InputPageState> {
+  constructor(props: RouteComponentProps) {
     super(props)
 
     this.state = {
@@ -80,8 +86,15 @@ class InputPage extends React.Component<{}, InputPageState> {
     }
   }
 
+  handleCancelButton = () => {
+    const { history } = this.props
+    history.push(ROUTES.HOME)
+  }
+
   handleSendButton = () => {
     const { type, title, duration, year, format, category } = this.state
+    const { history } = this.props
+    const user = AuthService.getLoggedUser()
 
     switch (type) {
       case 'movie':
@@ -90,19 +103,32 @@ class InputPage extends React.Component<{}, InputPageState> {
           duration: parseInt(duration),
           year: parseInt(year),
           format: format,
-          photo: '',
+          photo: 'a',
           category: category
         }
-        console.log(movie)
+
+        if (user && user.id) {
+          MovieService.createMovie(movie, user.id).then(movie => {
+            console.log(movie)
+            history.push(`${ROUTES.HOME}/${user.id}`)
+          })
+        }
+
         break
       case 'serie':
         const serie: Serie = {
           title: title,
           format: format,
-          photo: '',
+          photo: 'aa',
           category: category
         }
-        console.log(serie)
+
+        if (user && user.id) {
+          SeriesService.createSerie(serie, user.id).then(serie => {
+            console.log(serie)
+            history.push(`${ROUTES.HOME}/${user.id}`)
+          })
+        }
 
         break
       default:
@@ -182,11 +208,11 @@ class InputPage extends React.Component<{}, InputPageState> {
           })}
         </select>
 
-        <button>Cancelar</button>
+        <button onClick={this.handleCancelButton}>Cancelar</button>
         <button onClick={this.handleSendButton}>Adicionar</button>
       </div>
     )
   }
 }
 
-export default InputPage
+export default withRouter(InputPage)

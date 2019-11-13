@@ -3,16 +3,34 @@ import Serie from '../models/Serie'
 class SerieService {
   public url = `http://localhost:3000/series`
 
-  public fetchSeries = async (): Promise<[Serie]> => {
-    const response = await fetch(this.url)
+  public fetchSeries = async (user: number): Promise<[Serie]> => {
+    const response = await fetch(`http://localhost:3000/users/${user}/series`)
 
     const series = this.jsonTo(await response.json())
 
     return series
   }
 
-  public createSerie = async (serie: Serie): Promise<Serie> => {
-    const response = await fetch(this.url, {
+  public fetchSerie = async (user: number, id: number): Promise<Serie> => {
+    const response = await fetch(
+      `http://localhost:3000/users/${user}/series/${id}`
+    )
+
+    const serieJSON = await response.json()
+
+    const serie: Serie = {
+      id: serieJSON.id,
+      title: serieJSON.title,
+      photo: serieJSON.photo,
+      format: serieJSON.format_id,
+      category: serieJSON.category_id
+    }
+
+    return serie
+  }
+
+  public createSerie = async (serie: Serie, user: number): Promise<Serie> => {
+    const response = await fetch(`http://localhost:3000/users/${user}/series`, {
       method: 'POST',
       body: JSON.stringify(serie),
       headers: {
@@ -20,34 +38,50 @@ class SerieService {
       }
     })
 
-    const series = this.jsonTo(await response.json())
-    return series[0]
+    const serieJSON = await response.json()
+
+    const s: Serie = {
+      id: serieJSON.id,
+      title: serieJSON.title,
+      photo: serieJSON.photo,
+      owner: serieJSON.user_id,
+      format: serieJSON.format_id,
+      category: serieJSON.category_id
+    }
+    return s
   }
 
-  public updateSerie = async (serie: Serie): Promise<Serie> => {
-    const response = await fetch(`${this.url}/${serie.id}`, {
-      method: 'PUT',
-      body: JSON.stringify(serie),
-      headers: {
-        'Content-Type': 'application/json'
+  public updateSerie = async (serie: Serie, user: number): Promise<boolean> => {
+    const response = await fetch(
+      `http://localhost:3000/users/${user}/series/${serie.id}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(serie),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
-
-    const series = this.jsonTo(await response.json())
-    return series[0]
+    )
+    console.log(await response.json())
+    return true
   }
 
-  public deleteSerie = async (serie: Serie): Promise<Serie> => {
-    const response = await fetch(`${this.url}/${serie.id}`, {
-      method: 'DELETE',
-      body: JSON.stringify(serie),
-      headers: {
-        'Content-Type': 'application/json'
+  public deleteSerie = async (serie: Serie, user: number): Promise<boolean> => {
+    const response = await fetch(
+      `http://localhost:3000/users/${user}/series/${serie.id}`,
+      {
+        method: 'DELETE',
+        body: JSON.stringify(serie),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
 
-    const series = this.jsonTo(await response.json())
-    return series[0]
+    console.log(await response.json())
+
+    // const series = this.jsonTo(await response.json())
+    return true
   }
 
   private jsonTo = (json: any): [Serie] => {

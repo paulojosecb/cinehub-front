@@ -12,6 +12,18 @@ class FormatService {
     return formats
   }
 
+  public fetchFormat = async (id: number): Promise<Format> => {
+    const response = await fetch(`${this.url}/${id}`)
+    const formatsJSON = await response.json()
+
+    const format: Format = {
+      id: formatsJSON.id,
+      description: formatsJSON.description
+    }
+
+    return format
+  }
+
   public createFormat = async (format: Format): Promise<Format> => {
     const response = await fetch(this.url, {
       method: 'POST',

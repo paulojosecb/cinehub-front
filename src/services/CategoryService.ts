@@ -11,6 +11,17 @@ class CategoryService {
     return categories
   }
 
+  public fetchCategory = async (id: number): Promise<Category> => {
+    const response = await fetch(`${this.url}/${id}`)
+    const categoriesJSON = await response.json()
+
+    const category: Category = {
+      id: categoriesJSON.id,
+      description: categoriesJSON.description
+    }
+    return category
+  }
+
   public createCategory = async (category: Category): Promise<Category> => {
     const response = await fetch(this.url, {
       method: 'POST',
