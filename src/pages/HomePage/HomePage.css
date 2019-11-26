@@ -1,0 +1,11 @@
+.HomePage {
+
+}
+
+.HomePage_Title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 32px;
+    margin: 16px 0;
+}

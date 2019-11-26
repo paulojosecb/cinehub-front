@@ -1,8 +1,10 @@
 import React from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 
-import * as ROUTES from '../constants/routes'
-import AuthService from '../services/AuthService'
+import './NavBar.css'
+
+import * as ROUTES from '../../constants/routes'
+import AuthService from '../../services/AuthService'
 
 const handleOtherUserClick = (props: RouteComponentProps) => {
   const { history } = props
@@ -31,7 +33,7 @@ const handleDetailsClick = (props: RouteComponentProps) => {
 
 const NavBar: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
   return (
-    <div>
+    <div className="NavBar">
       <p onClick={() => handleOtherUserClick(props)}>Outros usuários</p>
       <p onClick={() => handleLogoClick(props)}>CineHub</p>
       <p onClick={() => handleDetailsClick(props)}>Meus dados</p>

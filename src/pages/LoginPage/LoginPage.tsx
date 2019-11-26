@@ -1,11 +1,13 @@
 import React, { SyntheticEvent } from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 import Notifications, { notify } from 'react-notify-toast'
-import User from '../models/User'
+import User from '../../models/User'
 
-import * as ROUTES from '../constants/routes'
+import * as ROUTES from '../../constants/routes'
 
-import AuthService from '../services/AuthService'
+import AuthService from '../../services/AuthService'
+
+import './LoginPage.css'
 
 // interface LoginPageProps extends RouteComponentProps {}
 
@@ -41,7 +43,13 @@ class LoginPage extends React.Component<RouteComponentProps, LoginPageState> {
     const { email, password } = this.state
     const { history } = this.props
     AuthService.signIn(email, password)
-      .then(user => history.push(`${ROUTES.HOME}/${user.id}`))
+      .then(user => {
+        if (user && AuthService.getLoggedUserRole() === 'user') {
+          history.push(`${ROUTES.HOME}/${user.id}`)
+        } else if (user && AuthService.getLoggedUserRole() === 'admin') {
+          history.push(`${ROUTES.ADMIN}`)
+        }
+      })
       .catch(error => {
         notify.show('Ocorreu um erro ao fazer o login', 'warning')
       })
@@ -51,15 +59,17 @@ class LoginPage extends React.Component<RouteComponentProps, LoginPageState> {
     const { history } = this.props
 
     const user = AuthService.getLoggedUser()
-    if (user) {
+    if (user && AuthService.getLoggedUserRole() === 'user') {
       history.push(`${ROUTES.HOME}/${user.id}`)
+    } else if (user && AuthService.getLoggedUserRole() === 'admin') {
+      history.push(`${ROUTES.ADMIN}/${user.id}`)
     }
   }
 
   render() {
     const { email, password } = this.state
     return (
-      <div className="App">
+      <div className="LoginPage">
         <Notifications />
         <h2>Login</h2>
         <input

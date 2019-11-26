@@ -2,9 +2,11 @@ import React, { SyntheticEvent } from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 import Notification, { notify } from 'react-notify-toast'
 
-import * as ROUTES from '../constants/routes'
+import * as ROUTES from '../../constants/routes'
 
-import AuthService from '../services/AuthService'
+import AuthService from '../../services/AuthService'
+
+import './SignupPage.css'
 
 interface SignupPageState {
   name: string
@@ -62,7 +64,7 @@ class SignupPage extends React.Component<RouteComponentProps, SignupPageState> {
   render() {
     const { name, login, email, password, confirmPassword } = this.state
     return (
-      <div className="App">
+      <div className="SignupPage">
         <Notification />
         <h2>Cadastro</h2>
         <input

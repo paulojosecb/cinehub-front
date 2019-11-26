@@ -82,7 +82,6 @@ class MovieService {
         }
       }
     )
-    console.log(await response.json())
 
     // const movies = this.jsonTo(await response.json())
     return true

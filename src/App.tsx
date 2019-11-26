@@ -1,10 +1,12 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 
+import './App.css'
+
 import * as ROUTES from './constants/routes'
 
 import * as PAGES from './pages'
-import NavBar from './components/NavBar'
+import NavBar from './components/NavBar/NavBar'
 
 const App: React.FC = () => {
   return (

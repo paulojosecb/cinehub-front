@@ -3,25 +3,44 @@ import Episode from '../models/Episode'
 class EpisodeService {
   public url = `http://localhost:3000/episodes`
 
-  public fetchEpisodes = async (): Promise<[Episode]> => {
-    const response = await fetch(this.url)
+  public fetchEpisodes = async (
+    serie: number,
+    user: number
+  ): Promise<[Episode]> => {
+    const response = await fetch(
+      `http://localhost:3000/users/${user}/series/${serie}/episodes`
+    )
 
     const episodes = this.jsonTo(await response.json())
-
     return episodes
   }
 
-  public createEpisode = async (episode: Episode): Promise<Episode> => {
-    const response = await fetch(this.url, {
-      method: 'POST',
-      body: JSON.stringify(episode),
-      headers: {
-        'Content-Type': 'application/json'
+  public createEpisode = async (
+    episode: Episode,
+    serie: number,
+    user: number
+  ): Promise<Episode> => {
+    const response = await fetch(
+      `http://localhost:3000/users/${user}/series/${serie}/episodes`,
+      {
+        method: 'POST',
+        body: JSON.stringify(episode),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
 
-    const episodes = this.jsonTo(await response.json())
-    return episodes[0]
+    const episodeJSON = await response.json()
+
+    const ep: Episode = {
+      id: episodeJSON.id,
+      title: episodeJSON.title,
+      duration: episodeJSON.duration,
+      serie: episodeJSON.serie
+    }
+
+    return ep
   }
 
   public updateEpisode = async (episode: Episode): Promise<Episode> => {
@@ -37,17 +56,23 @@ class EpisodeService {
     return episodes[0]
   }
 
-  public deleteEpisode = async (episode: Episode): Promise<Episode> => {
-    const response = await fetch(`${this.url}/${episode.id}`, {
-      method: 'DELETE',
-      body: JSON.stringify(episode),
-      headers: {
-        'Content-Type': 'application/json'
+  public deleteEpisode = async (
+    episode: Episode,
+    user: number
+  ): Promise<boolean> => {
+    const response = await fetch(
+      `http://localhost:3000/users/${user}/series/${episode.serie}/episodes/${episode.id}`,
+      {
+        method: 'DELETE',
+        body: JSON.stringify(episode),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
 
-    const episodes = this.jsonTo(await response.json())
-    return episodes[0]
+    // const episodes = this.jsonTo(await response.json())
+    return true
   }
 
   private jsonTo = (json: any): [Episode] => {

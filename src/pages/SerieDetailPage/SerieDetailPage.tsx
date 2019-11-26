@@ -1,19 +1,22 @@
 import React, { ChangeEvent, SyntheticEvent } from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 
-import * as ROUTES from '../constants/routes'
+import * as ROUTES from '../../constants/routes'
 
-import Serie from '../models/Serie'
-import Episode from '../models/Episode'
-import Format from '../models/Format'
-import Category from '../models/Category'
+import Serie from '../../models/Serie'
+import Episode from '../../models/Episode'
+import Format from '../../models/Format'
+import Category from '../../models/Category'
 
-import SectionTitle from '../components/SectionTitle'
-import EpisodesList from '../components/EpisodesList'
-import FormatService from '../services/FormatService'
-import CategoryService from '../services/CategoryService'
-import SeriesService from '../services/SeriesService'
+import SectionTitle from '../../components/SectionTitle/SectionTitle'
+import EpisodesList from '../../components/EpisodesList/EpisodesList'
+import FormatService from '../../services/FormatService'
+import CategoryService from '../../services/CategoryService'
+import SeriesService from '../../services/SeriesService'
+import EpisodeService from '../../services/EpisodeService'
 import Notifications, { notify } from 'react-notify-toast'
+
+import './SerieDetailPage.css'
 
 interface SerieDetailPageState {
   serie: Serie
@@ -25,6 +28,8 @@ interface SerieDetailPageState {
   category: Category
   formats: Format[]
   categories: Category[]
+  episodeName: string
+  episodeDuration: string
 }
 
 type Params = {
@@ -48,7 +53,9 @@ class SerieDetailPage extends React.Component<
       format: {},
       category: {},
       formats: [],
-      categories: []
+      categories: [],
+      episodeName: '',
+      episodeDuration: ''
     }
   }
 
@@ -80,6 +87,13 @@ class SerieDetailPage extends React.Component<
         })
       }
     })
+
+    EpisodeService.fetchEpisodes(
+      parseInt(params.id),
+      parseInt(params.user_id)
+    ).then(episodes => {
+      this.setState({ episodes })
+    })
   }
 
   handleEditButton = () => {
@@ -109,8 +123,13 @@ class SerieDetailPage extends React.Component<
       case 'title':
         serie.title = target.value
         break
+      case 'episodeName':
+        this.setState({ episodeName: target.value })
+        break
+      case 'episodeDuration':
+        this.setState({ episodeDuration: target.value })
+        break
       default:
-        console.log('Error')
         break
     }
 
@@ -147,6 +166,27 @@ class SerieDetailPage extends React.Component<
     })
   }
 
+  handleEpisodeSubmit = () => {
+    const { episodeName, episodeDuration, serie } = this.state
+    const {
+      match: { params }
+    } = this.props
+    const episode: Episode = {
+      title: episodeName,
+      duration: parseInt(episodeDuration),
+      serie: serie.id
+    }
+
+    EpisodeService.createEpisode(
+      episode,
+      parseInt(params.id),
+      parseInt(params.user_id)
+    ).then(episode => {
+      const { episodes } = this.state
+      this.setState({ episodes: [...episodes, episode] })
+    })
+  }
+
   render() {
     const {
       loading,
@@ -157,10 +197,12 @@ class SerieDetailPage extends React.Component<
       format,
       category,
       formats,
-      categories
+      categories,
+      episodeDuration,
+      episodeName
     } = this.state
     return (
-      <div className="App">
+      <div className="SerieDetailPage">
         <Notifications />
         {error ? (
           'Ocorreu um erro'
@@ -169,17 +211,19 @@ class SerieDetailPage extends React.Component<
         ) : (
           <div>
             <div>
-              <img src={serie.photo} />
-              <div>
+              <img src={`http://localhost:3000/${serie.photo}`} />
+              <div className="SerieDetailPage_container">
                 {type == 'idle' ? (
                   <>
-                    <p>{serie.title ? serie.title : 'Indefinido'}</p>
+                    <p>Título:{serie.title ? serie.title : 'Indefinido'}</p>
                     <p>
+                      Categoria:
                       {category.description
                         ? category.description
                         : 'Indefinido'}
                     </p>
                     <p>
+                      Formato:
                       {format.description ? format.description : 'Indefinido'}
                     </p>
                   </>
@@ -228,9 +272,28 @@ class SerieDetailPage extends React.Component<
             </div>
 
             <div>
+              <br />
+              <br />
               <SectionTitle title="Episódios" />
-              <button>Adicionar</button>
-              <EpisodesList episodes={episodes} />
+              <br />
+              <input
+                name="episodeName"
+                value={episodeName}
+                placeholder="Nome do episódio"
+                onChange={this.handleInputChange}
+              />
+              <input
+                name="episodeDuration"
+                value={episodeDuration}
+                placeholder="Duração do episódio"
+                onChange={this.handleInputChange}
+              />
+              <button onClick={this.handleEpisodeSubmit}>Adicionar</button>
+              <br /> <br />
+              <EpisodesList
+                episodes={episodes}
+                user_id={serie.owner ? serie.owner : 0}
+              />
             </div>
           </div>
         )}

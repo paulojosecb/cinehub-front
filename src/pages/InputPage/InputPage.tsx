@@ -1,19 +1,24 @@
 import React, { ChangeEvent } from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
-import SectionTitle from '../components/SectionTitle'
+import SectionTitle from '../../components/SectionTitle/SectionTitle'
+import Notifications, { notify } from 'react-notify-toast'
 
-import Format from '../models/Format'
-import Category from '../models/Category'
-import Movie from '../models/Movie'
-import Serie from '../models/Serie'
+import Format from '../../models/Format'
+import Category from '../../models/Category'
+import Movie from '../../models/Movie'
+import Serie from '../../models/Serie'
 
-import FormatService from '../services/FormatService'
-import CategoryService from '../services/CategoryService'
-import MovieService from '../services/MovieService'
-import AuthService from '../services/AuthService'
+import FormatService from '../../services/FormatService'
+import CategoryService from '../../services/CategoryService'
+import MovieService from '../../services/MovieService'
+import AuthService from '../../services/AuthService'
+import UploadService from '../../services/UploadService'
 
-import * as ROUTES from '../constants/routes'
-import SeriesService from '../services/SeriesService'
+import * as ROUTES from '../../constants/routes'
+import SeriesService from '../../services/SeriesService'
+
+import './InputPage.css'
+import { file } from '@babel/types'
 
 interface InputPageState {
   formats: Format[]
@@ -24,6 +29,7 @@ interface InputPageState {
   year: string
   format: number
   category: number
+  selectedFile: any
 }
 
 class InputPage extends React.Component<RouteComponentProps, InputPageState> {
@@ -35,10 +41,11 @@ class InputPage extends React.Component<RouteComponentProps, InputPageState> {
       categories: [],
       type: 'movie',
       title: '',
-      duration: '0',
-      year: '2019',
+      duration: '',
+      year: '',
       format: 1,
-      category: 1
+      category: 1,
+      selectedFile: null
     }
   }
 
@@ -67,6 +74,27 @@ class InputPage extends React.Component<RouteComponentProps, InputPageState> {
     }
   }
 
+  handleFileChange = (event: any) => {
+    this.setState({
+      selectedFile: event.target.files[0]
+    })
+  }
+
+  handleFileSubmit = () => {
+    const { selectedFile } = this.state
+
+    if (!selectedFile) {
+      notify.show('Selecione um arquivo de imagem', 'warning')
+    } else {
+      const data = new FormData()
+      data.append('file', selectedFile)
+
+      UploadService.upload(data)
+        .then(filename => this.handleSend(filename))
+        .catch(err => console.log(err))
+    }
+  }
+
   handleSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const key = event.target.name
 
@@ -91,7 +119,7 @@ class InputPage extends React.Component<RouteComponentProps, InputPageState> {
     history.push(ROUTES.HOME)
   }
 
-  handleSendButton = () => {
+  handleSend = (filename: string) => {
     const { type, title, duration, year, format, category } = this.state
     const { history } = this.props
     const user = AuthService.getLoggedUser()
@@ -103,7 +131,7 @@ class InputPage extends React.Component<RouteComponentProps, InputPageState> {
           duration: parseInt(duration),
           year: parseInt(year),
           format: format,
-          photo: 'a',
+          photo: filename,
           category: category
         }
 
@@ -119,7 +147,7 @@ class InputPage extends React.Component<RouteComponentProps, InputPageState> {
         const serie: Serie = {
           title: title,
           format: format,
-          photo: 'aa',
+          photo: filename,
           category: category
         }
 
@@ -149,8 +177,12 @@ class InputPage extends React.Component<RouteComponentProps, InputPageState> {
     } = this.state
 
     return (
-      <div className="App">
+      <div className="InputPage ">
+        <Notifications />
         <SectionTitle title="Adicionar" />
+
+        <h3>Imagem</h3>
+        <input type="file" name="file" onChange={this.handleFileChange} />
 
         <select name="type" value={type} onChange={this.handleSelectChange}>
           <option value="movie">Filme</option>
@@ -164,7 +196,6 @@ class InputPage extends React.Component<RouteComponentProps, InputPageState> {
           onChange={this.handleInputChange}
           value={title}
         />
-        <input type="file" name="image" />
 
         {type == 'movie' ? (
           <div>
@@ -208,8 +239,10 @@ class InputPage extends React.Component<RouteComponentProps, InputPageState> {
           })}
         </select>
 
-        <button onClick={this.handleCancelButton}>Cancelar</button>
-        <button onClick={this.handleSendButton}>Adicionar</button>
+        <div className="InputPage_actions">
+          <button onClick={this.handleCancelButton}>Cancelar</button>
+          <button onClick={this.handleFileSubmit}>Adicionar</button>
+        </div>
       </div>
     )
   }

@@ -1,8 +1,10 @@
 import React from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
-import Serie from '../models/Movie'
+import Serie from '../../models/Movie'
 
-import * as ROUTES from '../constants/routes'
+import './SeriesList.css'
+
+import * as ROUTES from '../../constants/routes'
 
 interface SeriesListProps {
   series: Serie[]
@@ -20,14 +22,15 @@ const SeriesList: React.FC<SeriesListProps & RouteComponentProps> = (
   props: SeriesListProps
 ) => {
   return (
-    <div>
+    <div className="SeriesList">
       {props.series.map(serie => {
         return (
           <div
+            className="SeriesList_item"
             key={serie.id}
             onClick={() => handleClick(props, serie.id ? serie.id : 1)}
           >
-            <img src={serie.photo} />
+            <img src={`http://localhost:3000/${serie.photo}`} />
             <div>{serie.title}</div>
           </div>
         )

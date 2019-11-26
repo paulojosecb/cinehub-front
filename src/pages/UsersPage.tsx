@@ -1,6 +1,6 @@
 import React from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
-import SectionTitle from '../components/SectionTitle'
+import SectionTitle from '../components/SectionTitle/SectionTitle'
 import User from '../models/User'
 
 import UserService from '../services/UserService'

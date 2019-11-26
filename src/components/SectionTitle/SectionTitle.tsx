@@ -1,5 +1,7 @@
 import React from 'react'
 
+import './SectionTitle.css'
+
 interface SectionTitleProps {
   title: string
 }
@@ -7,7 +9,7 @@ interface SectionTitleProps {
 const SectionTitle: React.FC<SectionTitleProps> = (
   props: SectionTitleProps
 ) => {
-  return <div>{props.title}</div>
+  return <div className="SectionTitle">{props.title}</div>
 }
 
 export default SectionTitle

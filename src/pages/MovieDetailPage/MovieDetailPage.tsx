@@ -1,17 +1,19 @@
 import React, { SyntheticEvent, ChangeEvent } from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 
-import Movie from '../models/Movie'
-import Format from '../models/Format'
-import Category from '../models/Category'
+import Movie from '../../models/Movie'
+import Format from '../../models/Format'
+import Category from '../../models/Category'
 
-import MovieService from '../services/MovieService'
-import FormatService from '../services/FormatService'
-import CategoryService from '../services/CategoryService'
-import AuthService from '../services/AuthService'
+import MovieService from '../../services/MovieService'
+import FormatService from '../../services/FormatService'
+import CategoryService from '../../services/CategoryService'
+import AuthService from '../../services/AuthService'
 
-import * as ROUTES from '../constants/routes'
+import * as ROUTES from '../../constants/routes'
 import Notifications, { notify } from 'react-notify-toast'
+
+import './MovieDetailPage.css'
 
 interface MovieDetailPageState {
   movie: Movie
@@ -184,7 +186,7 @@ class MovieDetailPage extends React.Component<
     } = this.props
 
     return (
-      <div className="App">
+      <div className="MovieDetailPage">
         <Notifications />
         {error ? (
           'Ocorreu um erro'
@@ -192,15 +194,17 @@ class MovieDetailPage extends React.Component<
           'Carregando'
         ) : (
           <div>
-            <img src={movie.photo} />
-            <div>
+            <img src={`http://localhost:3000/${movie.photo}`} />
+            <div className="MovieDetailPage_container">
               {type == 'idle' ? (
                 <>
-                  <p>{movie.title ? movie.title : 'Indefinido'}</p>
-                  <p>{movie.duration ? movie.duration : 'Indefinido'}</p>
-                  <p>{movie.year ? movie.year : 'Indefinido'}</p>
-                  <p>{category ? category : 'Indefinido'}</p>
-                  <p>{format ? format : 'Indefinido'}</p>
+                  <p>Título: {movie.title ? movie.title : 'Indefinido'}</p>
+                  <p>
+                    Duração: {movie.duration ? movie.duration : 'Indefinido'}
+                  </p>
+                  <p>Ano: {movie.year ? movie.year : 'Indefinido'}</p>
+                  <p>Categoria: {category ? category : 'Indefinido'}</p>
+                  <p>Formato: {format ? format : 'Indefinido'}</p>
                 </>
               ) : (
                 <>

@@ -1,0 +1,6 @@
+.SignupPage {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 300px;
+    grid-row-gap: 8px;
+}

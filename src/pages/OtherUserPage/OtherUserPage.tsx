@@ -1,15 +1,21 @@
 import React from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
-import SectionTitle from '../components/SectionTitle'
-import MoviesList from '../components/MoviesList'
-import Movie from '../models/Movie'
+import SectionTitle from '../../components/SectionTitle/SectionTitle'
+import MoviesList from '../../components/MoviesList/MoviesList'
+import Movie from '../../models/Movie'
 
-import UserService from '../services/UserService'
-import MovieService from '../services/MovieService'
-import User from '../models/User'
+import UserService from '../../services/UserService'
+import MovieService from '../../services/MovieService'
+import User from '../../models/User'
+
+import './OtherUserPage.css'
+import SeriesService from '../../services/SeriesService'
+import Serie from '../../models/Serie'
+import SeriesList from '../../components/SeriesList/SeriesList'
 
 interface OtherUserPageState {
   movies: Movie[]
+  series: Serie[]
   user: User
 }
 
@@ -25,6 +31,7 @@ class OtherUserPage extends React.Component<
     super(p)
     this.state = {
       movies: [],
+      series: [],
       user: {}
     }
   }
@@ -38,21 +45,30 @@ class OtherUserPage extends React.Component<
       this.setState({ movies })
     )
 
+    SeriesService.fetchSeries(parseInt(params.user_id)).then(series => {
+      this.setState({ series })
+    })
+
     UserService.fetchUser(parseInt(params.user_id)).then(user =>
       this.setState({ user })
     )
   }
   render() {
-    const { movies, user } = this.state
+    const { movies, user, series } = this.state
     return (
-      <div className="App">
+      <div className="OtherUserPage">
         <div>
           <div>
             <SectionTitle
               title={`Acervo de ${user.name ? user.name : 'Carregando'}`}
             />
           </div>
+          <br />
+          <SectionTitle title="Filmes" />
           <MoviesList movies={movies} />
+          <br /> <br />
+          <SectionTitle title="Series" />
+          <SeriesList series={series} />
         </div>
       </div>
     )

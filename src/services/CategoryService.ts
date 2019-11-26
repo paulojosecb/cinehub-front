@@ -16,26 +16,32 @@ class CategoryService {
     const categoriesJSON = await response.json()
 
     const category: Category = {
-      id: categoriesJSON.id,
-      description: categoriesJSON.description
+      id: categoriesJSON ? categoriesJSON.id : null,
+      description: categoriesJSON ? categoriesJSON.description : 'Indefinido'
     }
+
     return category
   }
 
-  public createCategory = async (category: Category): Promise<Category> => {
+  public createCategory = async (description: string): Promise<Category> => {
     const response = await fetch(this.url, {
       method: 'POST',
-      body: JSON.stringify(category),
+      body: JSON.stringify({ description: description }),
       headers: {
         'Content-Type': 'application/json'
       }
     })
 
-    const categories = this.jsonTo(await response.json())
-    return categories[0]
+    const categoryJSON = await response.json()
+
+    const category: Category = {
+      id: categoryJSON.id ? categoryJSON.id : null,
+      description: categoryJSON.description
+    }
+    return category
   }
 
-  public updateCategory = async (category: Category): Promise<Category> => {
+  public updateCategory = async (category: Category): Promise<boolean> => {
     const response = await fetch(`${this.url}/${category.id}`, {
       method: 'PUT',
       body: JSON.stringify(category),
@@ -44,11 +50,15 @@ class CategoryService {
       }
     })
 
-    const formats = this.jsonTo(await response.json())
-    return formats[0]
+    const res = await response.json()
+    if (!res.error) {
+      return true
+    } else {
+      return false
+    }
   }
 
-  public deleteCategory = async (category: Category): Promise<Category> => {
+  public deleteCategory = async (category: Category): Promise<boolean> => {
     const response = await fetch(`${this.url}/${category.id}`, {
       method: 'DELETE',
       body: JSON.stringify(category),
@@ -57,8 +67,12 @@ class CategoryService {
       }
     })
 
-    const formats = this.jsonTo(await response.json())
-    return formats[0]
+    const res = await response.json()
+    if (!res.error) {
+      return true
+    } else {
+      return false
+    }
   }
 
   private jsonTo = (json: any): [Category] => {

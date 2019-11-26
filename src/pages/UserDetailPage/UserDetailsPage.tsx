@@ -1,14 +1,16 @@
 import React, { SyntheticEvent } from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
-import User from '../models/User'
+import User from '../../models/User'
 
-import AuthService from '../services/AuthService'
-import UserService from '../services/UserService'
+import AuthService from '../../services/AuthService'
+import UserService from '../../services/UserService'
 
-import * as ROUTES from '../constants/routes'
+import * as ROUTES from '../../constants/routes'
 
-import SectionTitle from '../components/SectionTitle'
+import SectionTitle from '../../components/SectionTitle/SectionTitle'
 import Notifications, { notify } from 'react-notify-toast'
+
+import './UserDetailPage.css'
 
 interface UserDetailsPageState {
   user: User
@@ -95,12 +97,12 @@ class UserDetailsPage extends React.Component<
   render() {
     const { user, loading } = this.state
     return (
-      <div className="App">
+      <div className="UserDetailPage">
         <Notifications />
         {loading ? (
           'Carregando'
         ) : (
-          <div>
+          <div className="UserDetailPage">
             <SectionTitle title="Meus dados" />
             <input
               type="text"
@@ -120,8 +122,11 @@ class UserDetailsPage extends React.Component<
               value={user.email ? user.email : 'Carregando'}
               onChange={this.handleInputChange}
             />
-            <button onClick={this.handleLogout}>Logout</button>
-            <button onClick={this.handleUpdate}>Atualizar</button>
+            <div className="UserDetailsPage_actions">
+              <button onClick={this.handleLogout}>Logout</button>
+              <button onClick={this.handleUpdate}>Atualizar</button>
+            </div>
+           
           </div>
         )}
       </div>

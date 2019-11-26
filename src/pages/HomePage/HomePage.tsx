@@ -1,17 +1,19 @@
 import React from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
-import SectionTitle from '../components/SectionTitle'
-import MoviesList from '../components/MoviesList'
-import Movie from '../models/Movie'
-import Serie from '../models/Serie'
+import SectionTitle from '../../components/SectionTitle/SectionTitle'
+import MoviesList from '../../components/MoviesList/MoviesList'
+import Movie from '../../models/Movie'
+import Serie from '../../models/Serie'
 
-import AuthService from '../services/AuthService'
-import MovieService from '../services/MovieService'
-import SerieService from '../services/SeriesService'
+import AuthService from '../../services/AuthService'
+import MovieService from '../../services/MovieService'
+import SerieService from '../../services/SeriesService'
 
-import * as ROUTES from '../constants/routes'
-import SeriesService from '../services/SeriesService'
-import SeriesList from '../components/SeriesList'
+import * as ROUTES from '../../constants/routes'
+import SeriesService from '../../services/SeriesService'
+import SeriesList from '../../components/SeriesList/SeriesList'
+
+import './HomePage.css'
 
 interface HomePageState {
   movies: Movie[]
@@ -54,12 +56,14 @@ class HomePage extends React.Component<RouteComponentProps, HomePageState> {
     return (
       <div className="App">
         <div>
-          <div>
+          <div className="HomePage_Title">
             <SectionTitle title="Meu acervo" />
             <button onClick={this.handleAddClick}>Adicionar</button>
           </div>
+          <br />
           <SectionTitle title="Filmes" />
           <MoviesList movies={movies} />
+          <br /> <br />
           <SectionTitle title="Séries" />
           <SeriesList series={series} />
         </div>

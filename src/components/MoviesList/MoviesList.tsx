@@ -1,8 +1,10 @@
 import React from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
-import Movie from '../models/Movie'
+import Movie from '../../models/Movie'
 
-import * as ROUTES from '../constants/routes'
+import './MoviesList.css'
+
+import * as ROUTES from '../../constants/routes'
 
 interface MoviesListProps {
   movies: Movie[]
@@ -20,14 +22,16 @@ const MoviesList: React.FC<MoviesListProps & RouteComponentProps> = (
   props: MoviesListProps
 ) => {
   return (
-    <div>
+    <div className="MoviesList">
       {props.movies.map(movie => {
+        console.log(movie.photo)
         return (
           <div
+            className="MoviesList_item"
             key={movie.id}
             onClick={() => handleMovieClick(props, movie.id ? movie.id : 1)}
           >
-            <img src={movie.photo} />
+            <img src={`http://localhost:3000/${movie.photo}`} />
             <div>{movie.title}</div>
           </div>
         )

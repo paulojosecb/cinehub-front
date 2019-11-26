@@ -17,27 +17,33 @@ class FormatService {
     const formatsJSON = await response.json()
 
     const format: Format = {
-      id: formatsJSON.id,
-      description: formatsJSON.description
+      id: formatsJSON ? formatsJSON.id : null,
+      description: formatsJSON ? formatsJSON.description : 'Indefinido'
     }
 
     return format
   }
 
-  public createFormat = async (format: Format): Promise<Format> => {
+  public createFormat = async (description: string): Promise<Format> => {
+    console.log(description)
     const response = await fetch(this.url, {
       method: 'POST',
-      body: JSON.stringify(format),
+      body: JSON.stringify({ description: description }),
       headers: {
         'Content-Type': 'application/json'
       }
     })
 
-    const formats = this.jsonToFormat(await response.json())
-    return formats[0]
+    const formatJSON = await response.json()
+    console.log(formatJSON)
+    const format: Format = {
+      id: formatJSON.id,
+      description: formatJSON.description
+    }
+    return format
   }
 
-  public updateFormat = async (format: Format): Promise<Format> => {
+  public updateFormat = async (format: Format): Promise<boolean> => {
     const response = await fetch(`${this.url}/${format.id}`, {
       method: 'PUT',
       body: JSON.stringify(format),
@@ -46,11 +52,15 @@ class FormatService {
       }
     })
 
-    const formats = this.jsonToFormat(await response.json())
-    return formats[0]
+    const res = await response.json()
+    if (!res.error) {
+      return true
+    } else {
+      return false
+    }
   }
 
-  public deleteFormat = async (format: Format): Promise<Format> => {
+  public deleteFormat = async (format: Format): Promise<boolean> => {
     const response = await fetch(`${this.url}/${format.id}`, {
       method: 'DELETE',
       body: JSON.stringify(format),
@@ -59,8 +69,12 @@ class FormatService {
       }
     })
 
-    const formats = this.jsonToFormat(await response.json())
-    return formats[0]
+    const res = await response.json()
+    if (!res.error) {
+      return true
+    } else {
+      return false
+    }
   }
 
   private jsonToFormat = (json: any): [Format] => {
